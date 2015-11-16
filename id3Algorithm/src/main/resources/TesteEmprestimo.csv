@@ -1,0 +1,8 @@
+caso;montante;idade;salario;conta;emprestimo
+1;medio;senior;alto;sim;sim
+2;medio;senior;alto;nao;nao
+3;baixo;jovem;alto;sim;sim
+4;baixo;senior;alto;nao;nao
+5;alto;media;alto;nao;nao
+6;alto;jovem;alto;sim;sim
+7;medio;jovem;alto;sim;sim
