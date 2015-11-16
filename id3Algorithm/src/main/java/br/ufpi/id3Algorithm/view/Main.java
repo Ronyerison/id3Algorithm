@@ -1,7 +1,7 @@
 /**
  * 
  */
-package br.ufpi.id3Algorithm;
+package br.ufpi.id3Algorithm.view;
 
 /**
  * @author Ronyerison
