@@ -19,7 +19,8 @@ public class Attribute {
 	private List<String> discriminatorValues;
 	private Map<String, AttributeValue> attributesValues;
 	private Double gain;
-	
+	private List<String> ids;
+
 	/**
 	 * @param label
 	 * @param values
@@ -40,27 +41,30 @@ public class Attribute {
 		this.label = label;
 		this.values = new ArrayList<String>();
 		this.discriminatorValues = new ArrayList<String>();
+		this.ids = new ArrayList<String>();
 		this.gain = null;
 	}
-	
-	public void calculeEntropy(){
-		if(this.values != null && this.discriminatorValues != null){
+
+	public void calculeEntropy() {
+		if (this.values != null && this.discriminatorValues != null) {
 			HashMap<String, AttributeValue> map = new HashMap<String, AttributeValue>();
 			AttributeValue av;
 			for (int i = 0; i < values.size(); i++) {
 				String key = values.get(i);
-				if(!map.containsKey(key)){
+				if (!map.containsKey(key)) {
 					av = new AttributeValue(label, key, 1);
 					av.addDiscriminatorValue(discriminatorValues.get(i));
+					av.addId(ids.get(i));
 					map.put(key, av);
-				}else{
+				} else {
 					av = map.get(key);
-					av.setCount(av.getCount()+1);
+					av.setCount(av.getCount() + 1);
 					av.addDiscriminatorValue(discriminatorValues.get(i));
+					av.addId(ids.get(i));
 					map.replace(key, av);
 				}
 			}
-			
+
 			Iterator<AttributeValue> iterator = map.values().iterator();
 			while (iterator.hasNext()) {
 				iterator.next().calculeEntropy();
@@ -69,21 +73,25 @@ public class Attribute {
 			this.attributesValues = map;
 		}
 	}
-	
-	public void calculeGain(Double entropyClass){
-		Iterator<AttributeValue> iterator = attributesValues.values().iterator();
+
+	public void calculeGain(Double totalEntropy) {
+		calculeEntropy();
+		Iterator<AttributeValue> iterator = attributesValues.values()
+				.iterator();
 		Double sum = 0.0;
-		while(iterator.hasNext()){
+		while (iterator.hasNext()) {
 			AttributeValue attributeValue = iterator.next();
-			sum += attributeValue.getEntropy() * (attributeValue.getCount() /values.size());
+			sum += attributeValue.getEntropy()
+					* (attributeValue.getCount().doubleValue() / (double) values.size());
 		}
-		
-		this.gain = entropyClass - sum;
+
+		this.gain = totalEntropy - sum;
 	}
-	
-	public void addValue(String value, String discriminatorValue){
+
+	public void addValue(String value, String discriminatorValue, String id) {
 		this.values.add(value);
 		this.discriminatorValues.add(discriminatorValue);
+		this.ids.add(id);
 	}
 
 	/**
@@ -94,7 +102,8 @@ public class Attribute {
 	}
 
 	/**
-	 * @param label the label to set
+	 * @param label
+	 *            the label to set
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -108,7 +117,8 @@ public class Attribute {
 	}
 
 	/**
-	 * @param values the values to set
+	 * @param values
+	 *            the values to set
 	 */
 	public void setValues(List<String> values) {
 		this.values = values;
@@ -122,12 +132,12 @@ public class Attribute {
 	}
 
 	/**
-	 * @param discriminatorValues the discriminatorValues to set
+	 * @param discriminatorValues
+	 *            the discriminatorValues to set
 	 */
 	public void setDiscriminatorValues(List<String> discriminatorValues) {
 		this.discriminatorValues = discriminatorValues;
 	}
-
 
 	/**
 	 * @return the gain
@@ -137,7 +147,8 @@ public class Attribute {
 	}
 
 	/**
-	 * @param gain the gain to set
+	 * @param gain
+	 *            the gain to set
 	 */
 	public void setGain(Double gain) {
 		this.gain = gain;
@@ -151,12 +162,22 @@ public class Attribute {
 	}
 
 	/**
-	 * @param attributesValues the attributesValues to set
+	 * @param attributesValues
+	 *            the attributesValues to set
 	 */
 	public void setAttributesValues(Map<String, AttributeValue> attributesValues) {
 		this.attributesValues = attributesValues;
 	}
 
-	
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Attribute [label=" + label + ", gain=" + gain
+				+ ", attributesValues=" + attributesValues + "]";
+	}
+
 }

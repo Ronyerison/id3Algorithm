@@ -18,6 +18,7 @@ public class AttributeValue {
 	private Integer count;
 	private Double entropy;
 	private List<String> discriminatorValues;
+	private List<String> ids;
 	
 	/**
 	 * @param attribute
@@ -28,6 +29,7 @@ public class AttributeValue {
 		this.attribute = attribute;
 		this.label = label;
 		this.count = count;
+		this.ids = new ArrayList<String>();
 		this.discriminatorValues = new ArrayList<String>();
 	}
 	
@@ -43,8 +45,8 @@ public class AttributeValue {
 		Double entropy = 0.0;
 		Iterator<Integer> iterator = map.values().iterator();
 		while(iterator.hasNext()){
-			Integer value = iterator.next();
-			entropy += -(value / count) * Math.log(value / count);
+			Double value = iterator.next().doubleValue();
+			entropy += -(value / count.doubleValue()) * (Math.log(value / count.doubleValue()) / Math.log(2.0));
 		}
 		
 		this.entropy = entropy;
@@ -52,6 +54,10 @@ public class AttributeValue {
 	
 	public void addDiscriminatorValue(String value){
 		this.discriminatorValues.add(value);
+	}
+	
+	public void addId(String id){
+		this.ids.add(id);
 	}
 	
 	/**
@@ -103,6 +109,43 @@ public class AttributeValue {
 	public void setEntropy(Double entropy) {
 		this.entropy = entropy;
 	}
+
+	/**
+	 * @return the discriminatorValues
+	 */
+	public List<String> getDiscriminatorValues() {
+		return discriminatorValues;
+	}
+
+	/**
+	 * @param discriminatorValues the discriminatorValues to set
+	 */
+	public void setDiscriminatorValues(List<String> discriminatorValues) {
+		this.discriminatorValues = discriminatorValues;
+	}
+
+	/**
+	 * @return the ids
+	 */
+	public List<String> getIds() {
+		return ids;
+	}
+
+	/**
+	 * @param ids the ids to set
+	 */
+	public void setIds(List<String> ids) {
+		this.ids = ids;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AttributeValue [label=" + label + ", entropy=" + entropy + "]";
+	}
+	
 	
 	
 }
