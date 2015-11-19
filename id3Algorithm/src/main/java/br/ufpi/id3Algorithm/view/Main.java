@@ -4,6 +4,7 @@
 package br.ufpi.id3Algorithm.view;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import br.ufpi.id3Algorithm.algorithm.Id3Algorithm;
@@ -26,11 +27,13 @@ public class Main {
 					.readCSV("src/main/resources/LoanTrainning.csv");
 			Node<String> tree = id3Algorithm.buildTree(trainningSet);
 			
-			@SuppressWarnings("unused")
 			List<String[]> testSet = ReadAndWriteCSV
 					.readCSV("src/main/resources/LoanTest.csv");
+			List<String> result = id3Algorithm.classificationTestSet(testSet, tree);
 			
 			System.out.println(tree.toString());
+			
+			System.out.println(Arrays.toString(result.toArray()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

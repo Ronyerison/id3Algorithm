@@ -72,6 +72,21 @@ public class Node<T> {
 	public void addEdge(String edgeValue){
 		this.edges.add(edgeValue);
 	}
+	
+	
+	/**
+	 * @return the edges
+	 */
+	public List<String> getEdges() {
+		return edges;
+	}
+
+	/**
+	 * @param edges the edges to set
+	 */
+	public void setEdges(List<String> edges) {
+		this.edges = edges;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

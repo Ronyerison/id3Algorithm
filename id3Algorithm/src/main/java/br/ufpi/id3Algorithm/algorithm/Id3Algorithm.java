@@ -42,7 +42,34 @@ public class Id3Algorithm {
 
 		return tree;
 	}
-
+	
+	public String classification(String[] line, Node<String> tree, HashMap<String, Integer> map){
+		if(tree.isLeaf()){
+			return tree.getData();
+		}else{
+			int index = map.get(tree.getData());	
+			String value = line[index];
+			for (int i=0; i<tree.getEdges().size(); i++) {
+				if(tree.getEdges().get(i).equalsIgnoreCase(value)){
+					return classification(line, tree.getChildren().get(i), map);
+				}
+			}
+		}
+		return "";
+	}
+	
+	public List<String> classificationTestSet(List<String[]> testSet, Node<String> tree){
+		List<String> lines = new ArrayList<String>();
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		for(int i=0; i<testSet.get(0).length-1; i++){
+			map.put(testSet.get(0)[i], i);
+		}
+		for(int i=1; i<testSet.size(); i++){
+			lines.add(classification(testSet.get(i), tree, map));
+		}
+		return lines;
+	}
+	
 	private List<String[]> getNewTrainningSet(List<String[]> oldTrainning,
 			AttributeValue av) {
 		List<String[]> newTrainning = new ArrayList<String[]>();
