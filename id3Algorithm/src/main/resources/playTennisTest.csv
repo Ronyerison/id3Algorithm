@@ -1,0 +1,3 @@
+id;outlook;temperature;humidity;windy;play
+1;overcast;hot;normal;FALSE;yes
+2;rainy;mild;high;TRUE;no

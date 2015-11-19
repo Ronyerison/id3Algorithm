@@ -24,11 +24,11 @@ public class Main {
 		Id3Algorithm id3Algorithm = new Id3Algorithm();
 		try {
 			List<String[]> trainningSet = ReadAndWriteCSV
-					.readCSV("src/main/resources/LoanTrainning.csv");
+					.readCSV("src/main/resources/playTennisTrainning.csv");
 			Node<String> tree = id3Algorithm.buildTree(trainningSet);
 			
 			List<String[]> testSet = ReadAndWriteCSV
-					.readCSV("src/main/resources/LoanTest.csv");
+					.readCSV("src/main/resources/playTennisTest.csv");
 			List<String> result = id3Algorithm.classificationTestSet(testSet, tree);
 			
 			System.out.println(tree.toString());
