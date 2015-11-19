@@ -1,7 +1,7 @@
 /**
  * 
  */
-package br.ufpi.id3Algorithm.model;
+package br.ufpi.id3Algorithm.model.id3;
 
 import java.util.ArrayList;
 import java.util.HashMap;

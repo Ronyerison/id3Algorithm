@@ -6,7 +6,7 @@ package br.ufpi.id3Algorithm.facade;
 import java.util.List;
 
 import br.ufpi.id3Algorithm.algorithm.Id3Algorithm;
-import br.ufpi.id3Algorithm.model.Tree;
+import br.ufpi.id3Algorithm.model.tree.Node;
 
 /**
  * @author Ronyerison
@@ -20,9 +20,8 @@ public class Id3Facade {
 	}
 
 
-	public Tree trainning(List<String[]> trainningSet){
-		
-		return null;
+	public Node<String> buildTree(List<String[]> trainningSet){
+		return id3Algorithm.buildTree(trainningSet);
 	}
 	
 	/**

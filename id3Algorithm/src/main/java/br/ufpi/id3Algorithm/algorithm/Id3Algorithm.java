@@ -12,10 +12,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import br.ufpi.id3Algorithm.model.Attribute;
-import br.ufpi.id3Algorithm.model.AttributeValue;
-import br.ufpi.id3Algorithm.model.Tree;
-import br.ufpi.id3Algorithm.model.TreeNode;
+import br.ufpi.id3Algorithm.model.id3.Attribute;
+import br.ufpi.id3Algorithm.model.id3.AttributeValue;
+import br.ufpi.id3Algorithm.model.tree.Node;
 
 /**
  * @author Ronyerison
@@ -23,24 +22,22 @@ import br.ufpi.id3Algorithm.model.TreeNode;
  */
 public class Id3Algorithm {
 
-	public Tree run(List<String[]> trainningSet, List<String[]> testSet) {
-		Tree tree = new Tree();
+	public Node<String> buildTree(List<String[]> trainningSet) {
 		List<String> discriminatorValues = getDiscriminatorValues(trainningSet);
 		if (trainningSet.isEmpty()) {
-			return tree;
+			return null;
 		} else if (hasEqualClassification(discriminatorValues)) {
-			tree.addRoot(1l, discriminatorValues.get(0));
+			Node<String> tree = new Node<String>(discriminatorValues.get(0));
 			return tree;
 		}
 		List<Attribute> attributes = getAllAttributes(trainningSet);
 		Attribute best = selectBestAttribute(attributes);
 		attributes.remove(best);
-		tree.addRoot(1l, best.getLabel());
+		Node<String> tree = new Node<String>(best.getLabel());
 		for (AttributeValue av : best.getAttributesValues().values()) {
 			List<String[]> newTrainning = getNewTrainningSet(trainningSet, av);
-			TreeNode node = run(newTrainning, testSet).getRoot();
-			tree.addEdge(1L, av.getLabel(), tree.getRoot(), node);
-			tree.addNode(tree.getRoot().getId(), node);
+			Node<String> node = buildTree(newTrainning);
+			node.setParent(tree, av.getLabel());
 		}
 
 		return tree;

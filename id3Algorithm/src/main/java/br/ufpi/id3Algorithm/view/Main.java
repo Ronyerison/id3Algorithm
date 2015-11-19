@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import br.ufpi.id3Algorithm.algorithm.Id3Algorithm;
-import br.ufpi.id3Algorithm.model.Tree;
+import br.ufpi.id3Algorithm.model.tree.Node;
 import br.ufpi.id3Algorithm.util.ReadAndWriteCSV;
 
 /**
@@ -24,9 +24,12 @@ public class Main {
 		try {
 			List<String[]> trainningSet = ReadAndWriteCSV
 					.readCSV("src/main/resources/LoanTrainning.csv");
+			Node<String> tree = id3Algorithm.buildTree(trainningSet);
+			
+			@SuppressWarnings("unused")
 			List<String[]> testSet = ReadAndWriteCSV
 					.readCSV("src/main/resources/LoanTest.csv");
-			Tree tree = id3Algorithm.run(trainningSet, testSet);
+			
 			System.out.println(tree.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
