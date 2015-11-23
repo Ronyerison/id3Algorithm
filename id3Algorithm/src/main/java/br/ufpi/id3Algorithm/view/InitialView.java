@@ -7,8 +7,10 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -20,6 +22,10 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
+import br.ufpi.id3Algorithm.algorithm.Id3Algorithm;
+import br.ufpi.id3Algorithm.model.tree.Node;
+import br.ufpi.id3Algorithm.util.ReadAndWriteCSV;
 
 /**
  * @author Vanderson Moura
@@ -34,8 +40,9 @@ public class InitialView extends JFrame {
 	private JPanel contentPane;
 	private Panel dataPanel;
 	private JTextField fileINTextField;
-	GUI gui; 
-
+	private static InitialView frame;
+	private JButton btnGenerateTree;
+	private String discriminator;
 	/**
 	 * Launch the application.
 	 */
@@ -43,7 +50,7 @@ public class InitialView extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					InitialView frame = new InitialView();
+					frame = new InitialView();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -94,21 +101,22 @@ public class InitialView extends JFrame {
 		fileINTextField.setColumns(10);
 		
 		JLabel inFile = new JLabel("CSV File:");
-		inFile.setBounds(10, 35, 46, 14);
+		inFile.setBounds(10, 35, 53, 14);
 		panel_2.add(inFile);
 		
-		JButton btnExecute = new JButton("Generate Tree");
-		btnExecute.setBounds(163, 98, 119, 38);
-		btnExecute.addActionListener(new ActionListener() {
+		btnGenerateTree = new JButton("Generate Tree");
+		btnGenerateTree.setBounds(163, 98, 119, 38);
+		btnGenerateTree.setEnabled(false);
+		btnGenerateTree.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				ResultView generatedTree = new ResultView(generateTree(), discriminator);
+				generatedTree.setVisible(true);
+				frame.setVisible(false);
 			}
 		});
-		panelMain.add(btnExecute);
-		gui = new GUI(contentPane);
-		gui.drawTree();
+		panelMain.add(btnGenerateTree);
+		
 	}
-	
 	
 	/**
 	 * 
@@ -121,8 +129,23 @@ public class InitialView extends JFrame {
 			Path path = Paths.get(file.getAbsolutePath());
 			String path_ = new String(path.toString());
 			fileINTextField.setText(path_);
+			this.btnGenerateTree.setEnabled(true);
 		} catch (Exception error){
 			JOptionPane.showMessageDialog(this, "Error opening file!");
 		}
+	}
+	
+	public Node<String> generateTree(){
+		Id3Algorithm id3Algorithm = new Id3Algorithm();
+		List<String[]> trainningSet = null;
+		
+		try {
+			trainningSet = ReadAndWriteCSV
+					.readCSV(fileINTextField.getText());
+			discriminator = trainningSet.get(0)[trainningSet.get(0).length-1];
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return id3Algorithm.buildTree(trainningSet);
 	}
 }

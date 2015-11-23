@@ -61,7 +61,7 @@ public class Id3Algorithm {
 	public List<String> classificationTestSet(List<String[]> testSet, Node<String> tree){
 		List<String> lines = new ArrayList<String>();
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		for(int i=0; i<testSet.get(0).length-1; i++){
+		for(int i=0; i<testSet.get(0).length; i++){
 			map.put(testSet.get(0)[i], i);
 		}
 		for(int i=1; i<testSet.size(); i++){
