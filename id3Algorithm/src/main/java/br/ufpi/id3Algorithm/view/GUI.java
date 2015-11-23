@@ -1,47 +1,44 @@
 package br.ufpi.id3Algorithm.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
 
 import org.apache.commons.collections15.functors.ConstantTransformer;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.algorithms.layout.PolarPoint;
 import edu.uci.ics.jung.algorithms.layout.RadialTreeLayout;
 import edu.uci.ics.jung.algorithms.layout.TreeLayout;
 import edu.uci.ics.jung.graph.DelegateTree;
 import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 
 
+/**
+ * @author Vanderson Moura
+ *
+ */
 public class GUI{
-	//Edita um grafo gerado pela fun��o criaGrafo
-	
 	private Forest<String, String> graph = createTree();
     private Layout<String, String> layout = new TreeLayout<String, String>(graph);
     private VisualizationViewer<String,String> vv;
-    private VisualizationServer.Paintable rings;
     private RadialTreeLayout<String,String> radialLayout;
     private JPanel jPanel;
     
@@ -50,29 +47,21 @@ public class GUI{
     	this.jPanel = jPanel; 
     }
     
-	public BasicVisualizationServer<String,String> desenhaGrafo(){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public BasicVisualizationServer<String,String> drawTree(){
 		
 	    this.layout = new TreeLayout<String, String>(graph);
-	    VisualizationViewer<String,String> vv;
-	   
 	    radialLayout = new RadialTreeLayout<String,String>(graph);
         radialLayout.setSize(new Dimension(600,600));
-	    
-//      layout.setSize(new Dimension(500,500));
-//	    layout.setSize(new Dimension(500,500));
-	    VisualizationServer.Paintable rings;
 	    
 	    vv =  new VisualizationViewer<String,String>(layout, new Dimension(600,600));
 	    vv.setBackground(Color.white);
         vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
         vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
         
-        // add a listener for ToolTips
         vv.setVertexToolTipTransformer(new ToStringLabeller());
         vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
        
-        rings = new Rings();
-        
         Container content = jPanel;
         final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
         content.add(panel);
@@ -80,10 +69,13 @@ public class GUI{
         final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
 
         vv.setGraphMouse(graphMouse);
-        
-        JComboBox modeBox = graphMouse.getModeComboBox();
-        modeBox.addItemListener(graphMouse.getModeListener());
-        graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+
+        JPanel controls = new JPanel();
+        JPanel controls2 = new JPanel();
+		controls.add(createJPanelTable());
+		controls2.add(createJPanelTesteSet());
+        content.add(controls, BorderLayout.AFTER_LINE_ENDS);
+        content.add(controls2, BorderLayout.PAGE_START);
         return vv;
 	}
 	
@@ -100,41 +92,51 @@ public class GUI{
 		return graph;
 	 }
 	 
-	 class Rings implements VisualizationServer.Paintable {
-	    	
-	    	Collection<Double> depths;
-	    	
-	    	public Rings() {
-	    		depths = getDepths();
-	    	}
-	    	
-	    	private Collection<Double> getDepths() {
-	    		Set<Double> depths = new HashSet<Double>();
-	    		Map<String,PolarPoint> polarLocations = radialLayout.getPolarLocations();
-	    		for(String v : graph.getVertices()) {
-	    			PolarPoint pp = polarLocations.get(v);
-	    			depths.add(pp.getRadius());
-	    		}
-	    		return depths;
-	    	}
-
-			public void paint(Graphics g) {
-				g.setColor(Color.lightGray);
+	 private JPanel createJPanelTable(){
+		JPanel panelMain = new JPanel();
+		Panel dataPanel = new Panel();
+		panelMain.setBorder(new TitledBorder(null, "Testing Set", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		
+		JScrollPane scrollPane = new JScrollPane();
+		dataPanel.add(scrollPane);
+		Object[] colunas = new Object[]{"coluna 1", "coluna 2", "coluna 3", "coluna 4"};
+		Object[][] valores = new Object[50][4];
+		
+		for (int i = 0; i < 50; i++) {
+			valores[i][0] = "linha" + i + "coluna" + 0;
+			valores[i][1] = "linha" + i + "coluna" + 1;
+			valores[i][2] = "linha" + i + "coluna" + 2;
+			valores[i][3] = "linha" + i + "coluna" + 3;
+		}
+		
+		JTable table;
+		table = new JTable(valores, colunas);
+		scrollPane.setViewportView(table);
+		panelMain.add(scrollPane);
+		return panelMain;
+	 }
+	 
+	 private JPanel createJPanelTesteSet(){
+		 	JPanel panelMain = new JPanel();
+			panelMain.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Trainning Set", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			
-				Graphics2D g2d = (Graphics2D)g;
-				Point2D center = radialLayout.getCenter();
-
-				Ellipse2D ellipse = new Ellipse2D.Double();
-				for(double d : depths) {
-					ellipse.setFrameFromDiagonal(center.getX()-d, center.getY()-d, 
-							center.getX()+d, center.getY()+d);
-					Shape shape = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).transform(ellipse);
-					g2d.draw(shape);
+			JButton btnChooseFile = new JButton("Open");
+			btnChooseFile.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
 				}
-			}
-
-			public boolean useTransform() {
-				return true;
-			}
-	    }
+			});
+			btnChooseFile.setBounds(332, 31, 76, 23);
+			panelMain.add(btnChooseFile);
+			
+			JTextField fileINTextField;
+			fileINTextField = new JTextField();
+			fileINTextField.setBounds(66, 32, 256, 20);
+			panelMain.add(fileINTextField);
+			fileINTextField.setColumns(10);
+			
+			JLabel inFile = new JLabel("CSV File:");
+			inFile.setBounds(10, 35, 46, 14);
+			panelMain.add(inFile);
+			return panelMain;
+		 }
 }

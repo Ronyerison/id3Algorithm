@@ -7,8 +7,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * @author Vanderson Moura
+ *
+ */
 public class GeneratedTree extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	GUI gui; 
 
@@ -33,12 +41,10 @@ public class GeneratedTree extends JFrame {
 	 */
 	public GeneratedTree() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 800);
+		setBounds(100, 100, 498, 327);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		gui = new GUI(contentPane);
-		gui.desenhaGrafo();
 	}
 }
