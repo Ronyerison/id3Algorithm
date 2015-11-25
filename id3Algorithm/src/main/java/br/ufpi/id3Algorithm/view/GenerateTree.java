@@ -3,6 +3,8 @@ package br.ufpi.id3Algorithm.view;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.swing.JPanel;
 
@@ -62,17 +64,37 @@ public class GenerateTree{
 	
 	 private Forest <Node<String>, Edge<String, String>> createTree(Node<String> tree) {
 		DelegateTree <Node<String>, Edge<String, String>> graph = new DelegateTree<Node<String>, Edge<String, String>>();
-		Node<String> montante = new Node<String>("Montante");
-		Node<String> salario = new Node<String>("Salario");
-		Node<String> conta = new Node<String>("Conta");
-		graph.setRoot(montante);
-		graph.addChild(new Edge<String, String>("Baixo", montante, new Node<String>("Sim")), montante, new Node<String>("SimM"));
-		graph.addChild(new Edge<String, String>("Alto", montante, conta), montante, conta);
-		graph.addChild(new Edge<String, String>("Medio", montante, salario), montante, salario);
-		graph.addChild(new Edge<String, String>("Sim",  conta, new Node<String>("SimC")), conta, new Node<String>("SimC"));
-		graph.addChild(new Edge<String, String>("Não",  conta, new Node<String>("NaoC")), conta, new Node<String>("NaoC"));
-		graph.addChild(new Edge<String, String>("Baixo",  salario, new Node<String>("Nao")), salario, new Node<String>("NaoS"));
-		graph.addChild(new Edge<String, String>("Alto",  salario, new Node<String>("SimC")), salario, new Node<String>("SimS"));		
+		graph.setRoot(tree);
+		Queue<Edge<String, String>> queue = new LinkedList<Edge<String, String>>();
+		
+		queue.clear();
+		for (Edge<String, String> edge : tree.getEdges()) {
+			queue.add(edge);
+		}
+		
+		while(!queue.isEmpty()){
+			Edge<String, String> edge = queue.remove();
+			graph.addChild(edge, edge.getParent(), edge.getChild());
+			if(edge.getChild().getEdges().size() > 0){
+				for (Edge<String, String> e : edge.getChild().getEdges()){
+					queue.add(e);
+				}
+			}
+		}
+			
+		
+//		Node<String> montante = new Node<String>("Montante");
+//		Node<String> salario = new Node<String>("Salario");
+//		Node<String> conta = new Node<String>("Conta");
+//	
+//		graph.addChild(new Edge<String, String>("Baixo", montante, new Node<String>("Sim")), montante, new Node<String>("SimM"));
+//		graph.addChild(new Edge<String, String>("Alto", montante, conta), montante, conta);
+//		graph.addChild(new Edge<String, String>("Medio", montante, salario), montante, salario);
+//		graph.addChild(new Edge<String, String>("Sim",  conta, new Node<String>("SimC")), conta, new Node<String>("SimC"));
+//		graph.addChild(new Edge<String, String>("Não",  conta, new Node<String>("NaoC")), conta, new Node<String>("NaoC"));
+//		graph.addChild(new Edge<String, String>("Baixo",  salario, new Node<String>("Nao")), salario, new Node<String>("NaoS"));
+//		graph.addChild(new Edge<String, String>("Alto",  salario, new Node<String>("SimC")), salario, new Node<String>("SimS"));		
+//		
 		return graph;
 	 }
 }

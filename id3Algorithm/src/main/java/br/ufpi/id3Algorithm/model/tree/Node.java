@@ -95,29 +95,5 @@ public class Node<T> {
 		return data+"";
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((children == null) ? 0 : children.hashCode());
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		result = prime * result + ((edges == null) ? 0 : edges.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		return false;
-	}
-
-	
 	
 }
