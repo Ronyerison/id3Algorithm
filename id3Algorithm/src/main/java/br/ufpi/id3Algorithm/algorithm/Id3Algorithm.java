@@ -50,7 +50,7 @@ public class Id3Algorithm {
 			int index = map.get(tree.getData());	
 			String value = line[index];
 			for (int i=0; i<tree.getEdges().size(); i++) {
-				if(tree.getEdges().get(i).equalsIgnoreCase(value)){
+				if(tree.getEdges().get(i).getData().equalsIgnoreCase(value)){
 					return classification(line, tree.getChildren().get(i), map);
 				}
 			}

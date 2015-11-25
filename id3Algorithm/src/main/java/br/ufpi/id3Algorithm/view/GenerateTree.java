@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import org.apache.commons.collections15.functors.ConstantTransformer;
 
+import br.ufpi.id3Algorithm.model.tree.Edge;
 import br.ufpi.id3Algorithm.model.tree.Node;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.RadialTreeLayout;
@@ -33,15 +34,15 @@ public class GenerateTree{
     }
     
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public BasicVisualizationServer<String,String> drawTree(Node<String> tree){
-		Forest<String, String> graph  = createTree(tree);
-	    Layout<String, String> layout = new TreeLayout<String, String>(graph);
-	    VisualizationViewer<String,String> vv;
-	    RadialTreeLayout<String,String> radialLayout = new RadialTreeLayout<String,String>(graph);
+	public BasicVisualizationServer<Node<String>,Edge<String, String>> drawTree(Node<String> tree){
+		Forest<Node<String>, Edge<String, String>> graph  = createTree(tree);
+	    Layout<Node<String>, Edge<String, String>> layout = new TreeLayout<Node<String>, Edge<String, String>>(graph);
+	    VisualizationViewer<Node<String>,Edge<String, String>> vv;
+	    RadialTreeLayout<Node<String>,Edge<String, String>> radialLayout = new RadialTreeLayout<Node<String>,Edge<String, String>>(graph);
         
 	    radialLayout.setSize(new Dimension(800,800));
 	    
-	    vv =  new VisualizationViewer<String,String>(layout, new Dimension(800,650));
+	    vv =  new VisualizationViewer<Node<String>,Edge<String, String>>(layout, new Dimension(800,650));
 	    vv.setBackground(Color.white);
         vv.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
         vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
@@ -59,16 +60,19 @@ public class GenerateTree{
         return vv;
 	}
 	
-	 private Forest <String, String> createTree(Node<String> tree) {
-		DelegateTree <String, String> graph = new DelegateTree<String, String>();
-		graph.setRoot("Montante");
-		graph.addChild("Baixo", "Montante", "Sim");
-		graph.addChild("Alto", "Montante", "Conta");
-		graph.addChild("Medio", "Montante", "Salario");
-		graph.addChild("Sim", "Conta", "SimC");
-		graph.addChild("Nao", "Conta", "NaoC");
-		graph.addChild("BaixoS", "Salario", "NaoS");
-		graph.addChild("AltoS", "Salario", "SimS");		
+	 private Forest <Node<String>, Edge<String, String>> createTree(Node<String> tree) {
+		DelegateTree <Node<String>, Edge<String, String>> graph = new DelegateTree<Node<String>, Edge<String, String>>();
+		Node<String> montante = new Node<String>("Montante");
+		Node<String> salario = new Node<String>("Salario");
+		Node<String> conta = new Node<String>("Conta");
+		graph.setRoot(montante);
+		graph.addChild(new Edge<String, String>("Baixo", montante, new Node<String>("Sim")), montante, new Node<String>("SimM"));
+		graph.addChild(new Edge<String, String>("Alto", montante, conta), montante, conta);
+		graph.addChild(new Edge<String, String>("Medio", montante, salario), montante, salario);
+		graph.addChild(new Edge<String, String>("Sim",  conta, new Node<String>("SimC")), conta, new Node<String>("SimC"));
+		graph.addChild(new Edge<String, String>("Não",  conta, new Node<String>("NaoC")), conta, new Node<String>("NaoC"));
+		graph.addChild(new Edge<String, String>("Baixo",  salario, new Node<String>("Nao")), salario, new Node<String>("NaoS"));
+		graph.addChild(new Edge<String, String>("Alto",  salario, new Node<String>("SimC")), salario, new Node<String>("SimS"));		
 		return graph;
 	 }
 }

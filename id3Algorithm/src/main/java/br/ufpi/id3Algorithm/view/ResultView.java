@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -15,6 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -25,8 +26,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import br.ufpi.id3Algorithm.algorithm.Id3Algorithm;
 import br.ufpi.id3Algorithm.model.tree.Node;
 import br.ufpi.id3Algorithm.util.ReadAndWriteCSV;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
 
 /**
  * @author Vanderson Moura
@@ -43,6 +42,7 @@ public class ResultView extends JFrame {
 	private JTextField textField;
 	private JButton btnClassify;
 	JTable table;
+	private JTable table_1;
 
 	/**
 	 * Create the frame.
@@ -73,12 +73,12 @@ public class ResultView extends JFrame {
 				openFile();
 			}
 		});
-		button.setBounds(352, 31, 66, 23);
+		button.setBounds(343, 31, 66, 23);
 		panel_2.add(button);
 		
 		textField = new JTextField();
 		textField.setColumns(10);
-		textField.setBounds(66, 32, 276, 20);
+		textField.setBounds(57, 32, 276, 20);
 		panel_2.add(textField);
 		
 		JLabel label = new JLabel("CSV File:");
@@ -86,22 +86,21 @@ public class ResultView extends JFrame {
 		panel_2.add(label);
 		
 		btnClassify = new JButton("Classify");
-		btnClassify.setBounds(428, 31, 76, 23);
+		btnClassify.setBounds(419, 31, 85, 23);
 		btnClassify.setEnabled(false);
 		panel_2.add(btnClassify);
 		
+		GenerateTree gui = new GenerateTree(panel);
+		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Results", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_1.setBounds(838, 92, 514, 607);
+		panel_1.setBorder(new TitledBorder(null, "Results", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel_1.setBounds(844, 92, 508, 607);
 		contentPane.add(panel_1);
-		panel_1.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 600, 504, -598);
 		panel_1.add(scrollPane);
-		scrollPane.setViewportView(table);
 		
-		GenerateTree gui = new GenerateTree(panel);
+		table_1 = new JTable();
 		gui.drawTree(tree);
 		
 		btnClassify.addActionListener(new ActionListener() {
@@ -110,23 +109,25 @@ public class ResultView extends JFrame {
 				List<String[]> testSet = null;
 				try {
 					testSet = ReadAndWriteCSV.readCSV(textField.getText());
-				} catch (IOException e1) {
+					List<String> result = id3Algorithm.classificationTestSet(testSet, tree);
+					
+					testSet.set(0, ArrayUtils.add(testSet.get(0), discriminator));
+					
+					Object[][] values = new Object[testSet.size()-1][testSet.get(0).length];
+					for (int i = 1; i < testSet.size(); i++) {
+						testSet.set(i, ArrayUtils.add(testSet.get(i), result.get(i-1)));
+						values[i-1] = ArrayUtils.add(testSet.get(i), result.get(i-1));
+					}
+					String[] columns = testSet.get(0); 
+					testSet.remove(0);
+					
+					table_1 = new JTable(values, columns);
+					scrollPane.setViewportView(table_1);
+					panel_1.revalidate();
+					
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				
-				List<String> result = id3Algorithm.classificationTestSet(testSet, tree);
-				
-				testSet.set(0, ArrayUtils.add(testSet.get(0), discriminator));
-				
-				Object[][] values = new Object[testSet.size()-1][testSet.get(0).length];
-				for (int i = 1; i < testSet.size(); i++) {
-					testSet.set(i, ArrayUtils.add(testSet.get(i), result.get(i-1)));
-					values[i-1] = ArrayUtils.add(testSet.get(i), result.get(i-1));
-				}
-				String[] columns = testSet.get(0); 
-				testSet.remove(0);
-				table = new JTable(values, columns);
-				
 			}
 		});
 	}

@@ -50,6 +50,7 @@ public class InitialView extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					frame = new InitialView();
 					frame.setVisible(true);
 				} catch (Exception e) {

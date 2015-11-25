@@ -14,7 +14,7 @@ public class Node<T> {
 	private Node<T> parent = null;
 	private T data = null;
 	private List<Node<T>> children = new ArrayList<Node<T>>();
-	private List<String> edges = new ArrayList<String>();
+	private List<Edge<String, T>> edges = new ArrayList<Edge<String,T>>();
 
 	public Node(T data) {
 		this.data = data;
@@ -23,7 +23,7 @@ public class Node<T> {
 	public Node(T data, Node<T> parent, String edgeValue) {
 		this.data = data;
 		this.parent = parent;
-		this.parent.addEdge(edgeValue);
+		this.parent.addEdge(new Edge<String, T>(edgeValue, parent, this));
 	}
 
 	public List<Node<T>> getChildren() {
@@ -38,12 +38,12 @@ public class Node<T> {
 	public void addChild(T data, String edgeValue) {
 		Node<T> child = new Node<T>(data);
 		this.children.add(child);
-		this.addEdge(edgeValue);
+		this.addEdge(new Edge<String, T>(edgeValue, this, child));
 	}
 
 	public void addChild(Node<T> child, String edgeValue) {
 		this.children.add(child);
-		this.edges.add(edgeValue);
+		this.edges.add(new Edge<String, T>(edgeValue, this, child));
 	}
 
 	public T getData() {
@@ -69,23 +69,22 @@ public class Node<T> {
 		this.parent = null;
 	}
 
-	public void addEdge(String edgeValue){
-		this.edges.add(edgeValue);
-	}
-	
-	
 	/**
 	 * @return the edges
 	 */
-	public List<String> getEdges() {
+	public List<Edge<String, T>> getEdges() {
 		return edges;
 	}
 
 	/**
 	 * @param edges the edges to set
 	 */
-	public void setEdges(List<String> edges) {
+	public void setEdges(List<Edge<String, T>> edges) {
 		this.edges = edges;
+	}
+	
+	public void addEdge(Edge<String, T> edge){
+		this.edges.add(edge);
 	}
 
 	/* (non-Javadoc)
@@ -93,9 +92,32 @@ public class Node<T> {
 	 */
 	@Override
 	public String toString() {
-		return "Node [data=" + data + ",\n\t children="
-				+ children + ",\n\t edges=" + edges + "]";
+		return data+"";
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((children == null) ? 0 : children.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((edges == null) ? 0 : edges.hashCode());
+		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return false;
+	}
+
+	
 	
 }
